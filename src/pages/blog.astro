@@ -1,22 +1,37 @@
 ---
+import { getCollection } from 'astro:content'
+import Layout from '../layouts/base.astro'
 
+const posts = await getCollection('blog')
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Blog</title>
-  </head>
-  <body>
-    <a href="/">Home</a>
-    <a href="/about/">About</a>
-    <a href="/blog/">Blog</a>
-    <h1>Blog</h1>
-    <ul>
-      <li><a href="/posts/post-1/">Post 1</a></li>
-    </ul>
-  </body>
-</html>
+<Layout>
+  <section class="space-y-4">
+    <div>
+      <h1 class="text-2xl flex gap-2 items-center my-6 cursor-pointer">Blog</h1>
+      {
+        posts.map((post) => {
+          return (
+            <article class="mb-8">
+              <a class="flex justify-between items-start" href={`/blog/${post.slug}`}>
+                <h2 class="text-lg hover:underline decoration-stone-100 hover:decoration-1 mb-1">{post.data.title}</h2>
+                <span class="text-sm">{post.data.date.toLocaleDateString('en-GB')}</span>
+              </a>
+              <p class="text-sm text-stone-600 max-w-[75%] dark:text-stone-200">{post.data.description}</p>
+              {post.data.tags.map((tag) => {
+                return (
+                  <a
+                    class="inline-block mr-2 text-sm text-stone-400 dark:text-stone-200 hover:underline"
+                    href="/tags/test"
+                  >
+                    #{tag}
+                  </a>
+                )
+              })}
+            </article>
+          )
+        })
+      }
+    </div>
+  </section>
+</Layout>
